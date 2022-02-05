@@ -7,56 +7,68 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-// todo:
-//  1. merge Board with TetrisGame
-
 public class TetrisGame extends Application {
-    private int newX = 230;
-    private int newY = 0;
-    public final int WIDTH = 500;
-    public final int HEIGHT = 1000;
-    final int moveAmount = 20;
+    private final int gameWidth = 500; // 500
+    private final int gameHeight = 1000; // 1000
+    private final int boardWidth = 10; //10
+    private final int boardHeight = 20; // 20
+
+    private final Color RECFILL = new Color(1, 1, 1, 1);
+    private final Color RECSTROKE = new Color(0, 0, 0, 1);
+
+    private char[][] board = new char[][]{};
+
+    public void clearBoard(){
+        for (int x = 0; x < board.length; x++) {
+            for (int y = 0; y < board[0].length; y++) {
+                board[x][y] = '-';
+            }
+        }
+    }
+
+    public void printBoard(){
+        for (int x = 0; x < board.length; x++) {
+            for (int y = 0; y < board[0].length; y++) {
+                System.out.print(board[x][y]);
+            }
+            System.out.println();
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Tetris");
         primaryStage.setResizable(false);
 
-        Rectangle player = new Rectangle(230, 0, 20, 20);
+        Rectangle[][] rectangleList = new Rectangle[10][20];
 
-        player.setFill(new Color(1,0,0,1));
+        Pane pane = new Pane();
 
-        Pane canvas = new Pane(player);
+        instantiateRectangles(rectangleList, pane);
 
-        Scene scene = new Scene(canvas, WIDTH, HEIGHT);
+        Scene scene = new Scene(pane, gameWidth, gameHeight);
 
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                newY+=20;
-                player.setY(newY);
+                // do gravity
             }
         };
         timer.scheduleAtFixedRate(task, 0, 500);
 
         scene.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.RIGHT){
-                newX = checkXBoundaries(newX+moveAmount);
-                player.setX(newX);
+                // move shape right
             } else if(e.getCode() == KeyCode.LEFT){
-                newX = checkXBoundaries(newX-moveAmount);
-                player.setX(newX);
+                // move shape left
             } else if(e.getCode() == KeyCode.UP){
-                newY = checkYBoundaries(newY-moveAmount);
-                player.setY(newY);
+                // rotate shape
             } else if(e.getCode() == KeyCode.DOWN){
-                newY = checkYBoundaries(newY+moveAmount);
-                player.setY(newY);
+                // move shape down
             }
         });
 
@@ -65,23 +77,21 @@ public class TetrisGame extends Application {
 
     }
 
-    private int checkXBoundaries(int newX){
-        //instead of 20 subtract the width of the shape (the shape will be a parameter)
-        if(newX > WIDTH -20){
-            return WIDTH -20;
-        } else if(newX < 0){
-            return 0;
+    private void instantiateRectangles(Rectangle[][] rectangles, Pane pane){
+        int xCoord = 0;
+        int yCoord = 0;
+        for (int x = 0; x < rectangles.length; x++) {
+            for (int y = 0; y < rectangles[0].length; y++) {
+                System.out.println("x is: " + xCoord + " and y is: " + yCoord);
+                rectangles[x][y] = new Rectangle(xCoord, yCoord, gameWidth / boardWidth, gameHeight / boardHeight);
+                yCoord+= gameHeight / boardHeight;
+                rectangles[x][y].setFill(RECFILL);
+                rectangles[x][y].setStrokeWidth(2);
+                rectangles[x][y].setStroke(RECSTROKE);
+                pane.getChildren().add(rectangles[x][y]);
+            }
+            xCoord+= gameWidth / boardWidth;
+            yCoord = 0;
         }
-        return newX;
-    }
-
-    private int checkYBoundaries(int newY){
-        //instead of 20 subtract the height of the shape (the shape will be a parameter)
-        if(newY > HEIGHT -20){
-            return HEIGHT -20;
-        } else if(newY < 0){
-            return 0;
-        }
-        return newY;
     }
 }
