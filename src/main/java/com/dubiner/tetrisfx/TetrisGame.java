@@ -21,6 +21,8 @@ public class TetrisGame extends Application {
 
     private char[][] board = new char[][]{};
 
+    Rectangle[][] rectangleList;
+
     public void clearBoard(){
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[0].length; y++) {
@@ -43,7 +45,7 @@ public class TetrisGame extends Application {
         primaryStage.setTitle("Tetris");
         primaryStage.setResizable(false);
 
-        Rectangle[][] rectangleList = new Rectangle[10][20];
+        rectangleList = new Rectangle[boardWidth][boardHeight];
 
         Pane pane = new Pane();
 
@@ -56,6 +58,7 @@ public class TetrisGame extends Application {
             @Override
             public void run() {
                 // do gravity
+//                updateScreen();
             }
         };
         timer.scheduleAtFixedRate(task, 0, 500);
@@ -63,12 +66,16 @@ public class TetrisGame extends Application {
         scene.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.RIGHT){
                 // move shape right
+//                updateScreen();
             } else if(e.getCode() == KeyCode.LEFT){
                 // move shape left
+//                updateScreen();
             } else if(e.getCode() == KeyCode.UP){
                 // rotate shape
+//                updateScreen();
             } else if(e.getCode() == KeyCode.DOWN){
                 // move shape down
+//                updateScreen();
             }
         });
 
@@ -92,6 +99,22 @@ public class TetrisGame extends Application {
             }
             xCoord+= gameWidth / boardWidth;
             yCoord = 0;
+        }
+    }
+
+    // iterate through board and fill squares correspondingly
+    private void updateScreen() {
+        for (int x = 0; x < rectangleList.length; x++) {
+            for (int y = 0; y < rectangleList[0].length; y++) {
+                switch(board[x][y]){
+                    case '-': // empty squares
+                        break;
+                    case '*': // shapes not controlled by player
+                        rectangleList[x][y].setFill(Color.RED);
+                    case '%': // active block (current shape controlled by player)
+                        rectangleList[x][y].setFill(Color.GREEN);
+                }
+            }
         }
     }
 }

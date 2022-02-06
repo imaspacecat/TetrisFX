@@ -1,49 +1,36 @@
 package com.dubiner.tetrisfx;
 
-public interface Tetromino {
-    enum Rotation{
-        LEFT,
-        RIGHT
-    }
+import javafx.beans.NamedArg;
 
-    enum Direction{
+public interface Tetromino {
+    enum Orientation{
         LEFT,
         RIGHT,
+        UP,
         DOWN
     }
 
-    // rotates the shape left 90 deg or right 90 deg both in the array and visually
-    void rotate(Rotation rotation);
+    enum Direction{
+        CLOCKWISE,
+        COUNTERCLOCKWISE
+    }
 
-    // returns the coordinates of the shape in the array in the format {{x1, y1},{x2, y2},{x3, y3}, etc}
-    int[][] getCoordinates();
+    // draws a shape on the board with coordinates specifying the origin (center of shape)
+    // each implementation will have its own color denoted by an int
+    // symbol denotes what value will be placed for each shape coordinate (useful for erasing)
+    void draw(int[][] origin, int[][] board, int symbol);
 
-    // moves the shape units left or right; pos for right and neg for left
-    // moves both visually and in the array
-//    default void move(Direction direction, int units){
-////        for (int x = 0; x < ; x++) {
-////            for (int y = 0; y < ; y++) {
-////
-////            }
-////        }
-//    }
+    // rotates the tetromino 90 degrees clockwise or counterclockwise accordingly
+    void proportionalRotation(Direction direction);
 
-    // returns true if the shape overlaps another in the array
-    // always use this function before moving the shape visually
-    boolean isColliding();
+    // sets the tetromino to a certain orientation: left, right, up, or down
+    void absoluteRotation(Orientation orientation);
 
-    // records the position of the tetromino on array for later use (row detection and collision)
-    // resets position of tetromino and spawns new shape
-    void kill();
+    // returns a 2d array of the current coordinates of the shape
+    // eg: {{1, 2}, {1, 3}, {1, 4}, {2, 3}}
+    int[][] getCoordinates(int[][] board);
 
-    //resets the position of the shape to the starting point and randomizes the shape and color
-    void spawn();
-
-    void createTetromino(int x, int y);
-
-
-
-
-
+    // returns the current orientation of the shape
+    Orientation getOrientation();
 
 }
