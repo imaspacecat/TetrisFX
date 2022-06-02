@@ -1,2 +1,1 @@
-# TetrisFX
-A clone of Tetris I made/making for fun using JavaFX
+is trash garbage dont use this
