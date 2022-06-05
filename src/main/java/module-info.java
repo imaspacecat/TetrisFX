@@ -5,4 +5,6 @@ module com.dubiner.tetrisfx {
 
     opens com.dubiner.tetrisfx to javafx.fxml;
     exports com.dubiner.tetrisfx;
+    exports com.dubiner.tetrisfx.tetrominos;
+    opens com.dubiner.tetrisfx.tetrominos to javafx.fxml;
 }
