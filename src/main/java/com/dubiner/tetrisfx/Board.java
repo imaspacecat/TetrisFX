@@ -3,11 +3,11 @@ package com.dubiner.tetrisfx;
 import com.dubiner.tetrisfx.tetrominos.*;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import java.util.Random;
-
 import java.util.ArrayList;
 
 public class Board {
@@ -16,23 +16,27 @@ public class Board {
     private final RectangleMod[][] board;
     private final int recPixelSize;
     private final int activeFlag = 0;
-    private int[] origin = new int[] {0, 0};
+    private final int[] origin = new int[] {0, 0};
+    private Group group;
 
-    Random random = new Random();
+    private Random random = new Random();
 
-    private Tetromino[] shapes = new Tetromino[] {new TShape(), new IShape(), new JShape(), new LShape(),
+    private final Tetromino[] shapes = new Tetromino[] {new TShape(), new IShape(), new JShape(), new LShape(),
     new OShape(), new SShape(), new ZShape()};
 
     private Tetromino currentShape = shapes[random.nextInt(7)];
 
-    public Board(int width, int height, int recPixelSize){
+    public Board(int width, int height, int recPixelSize, Group group){
         this.width = width;
         this.height = height;
         this.recPixelSize = recPixelSize;
+        this.group = group;
         board = new RectangleMod[width][height];
+        initBoard();
     }
 
     private void moveShapes(){
+
         // stores all the rectangles that need to be moved
         ArrayList<RectangleMod> recToMove = new ArrayList<>();
 
@@ -102,27 +106,16 @@ public class Board {
 
     private void spawnNewShape(){
         int activeCount = 0;
-        outer: for (int i = 0; i < board.length; i++) {
+        for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                RectangleMod rect = board[i][j];
-                board[i][j].setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        System.out.println(rect.getFlag());
-                        System.out.println(rect.getFill());
-                    }
-                });
                 if(board[i][j].getFill() != Color.BLACK && board[i][j].getFlag() == 0){
                     activeCount++;
-
                 }
             }
         }
         if(activeCount == 0){
-            currentShape = new IShape(); // shapes[random.nextInt(7)]
+            currentShape = shapes[random.nextInt(7)];
             drawShape(currentShape);
-
-
         }
     }
 
@@ -132,11 +125,12 @@ public class Board {
         clearRow();
         spawnNewShape();
 
+
     }
 
     // create matrix of Rectangle objects with specified pixel size
 
-    public void initBoard(Group group){
+    private void initBoard(){
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 board[i][j] = new RectangleMod(0, i * recPixelSize, j * recPixelSize, recPixelSize, recPixelSize);
@@ -147,30 +141,7 @@ public class Board {
                 group.getChildren().add(board[i][j]);
             }
         }
-//
-//        board[0][0].setFill(Color.RED);
-//        board[1][0].setFill(Color.RED);
-//        board[2][0].setFill(Color.RED);
-//        board[3][0].setFill(Color.RED);
-//        board[4][0].setFill(Color.RED);
-//        board[5][0].setFill(Color.RED);
-//        board[6][0].setFill(Color.RED);
-//        board[7][0].setFill(Color.RED);
-//        board[8][0].setFill(Color.RED);
-//        board[9][0].setFill(Color.RED);
-//
-//
-//        board[1][2].setFill(Color.RED);
-//        board[2][2].setFill(Color.RED);
-//        board[3][2].setFill(Color.RED);
-//        board[4][2].setFill(Color.RED);
-//        board[5][2].setFill(Color.RED);
-//        board[6][2].setFill(Color.RED);
-//        board[7][2].setFill(Color.RED);
-//        board[8][2].setFill(Color.RED);
-//        board[9][2].setFill(Color.RED);
-//        board[0][0].setFill(Color.RED);
-//        board[1][0].setFill(Color.RED);
+
         board[0][19].setFill(Color.RED);
         board[2][19].setFill(Color.RED);
         board[3][19].setFill(Color.RED);
@@ -181,7 +152,6 @@ public class Board {
         board[8][19].setFill(Color.RED);
         board[9][19].setFill(Color.RED);
 
-//        drawShape(tShape);
         drawShape(currentShape);
     }
 
